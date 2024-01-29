@@ -1,42 +1,36 @@
 package com.example.MyJavaWebApp.controller;
 
-import com.example.MyJavaWebApp.model.Greeting;
+import com.example.MyJavaWebApp.services.GreetingService;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired; // Import the correct annotation
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.ui.Model;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-@WebMvcTest(GreetingController.class)
-class GreetingControllerTest {
+@SpringBootTest
+@AutoConfigureMockMvc
+public class GreetingControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Mock
-    private GreetingController greetingController;
+    @MockBean
+    private GreetingService greetingService;
 
     @Test
-    void testGreeting() throws Exception {
+    void testGreet() throws Exception {
         // Arrange
-        Greeting mockGreeting = new Greeting(1, "Hello, World!");
+        String name = "John";
+        String expectedGreeting = "Hello, " + name + "!";
+        Mockito.when(greetingService.generateGreeting(name)).thenReturn(expectedGreeting);
 
-        // Modify this line to match the actual method signature in your GreetingController
-        when(greetingController.greeting(any(String.class), any(Model.class)))
-                .thenReturn("greeting");  // Here, use a String representing the view name
-
-        // Act and Assert
-        mockMvc.perform(get("/greeting"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("greeting"))  // Check if the returned view name matches
-                .andExpect(model().attribute("greeting", mockGreeting));  // Check the model attribute
+        // Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.get("/greet").param("name", name))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(expectedGreeting));
     }
 }
