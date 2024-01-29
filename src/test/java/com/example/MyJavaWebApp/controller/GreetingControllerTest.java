@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired; // Import the correct annotation
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.ui.Model;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,7 +28,8 @@ class GreetingControllerTest {
     void testGreeting() throws Exception {
         // Arrange
         Greeting mockGreeting = new Greeting(1, "Hello, World!");
-        when(greetingController.greeting(any())).thenReturn(mockGreeting);
+        when(greetingController.greeting(any(String.class), any(Model.class)))
+                .thenReturn(mockGreeting);
 
         // Act and Assert
         mockMvc.perform(get("/greeting"))
