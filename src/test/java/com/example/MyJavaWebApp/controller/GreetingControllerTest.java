@@ -28,13 +28,15 @@ class GreetingControllerTest {
     void testGreeting() throws Exception {
         // Arrange
         Greeting mockGreeting = new Greeting(1, "Hello, World!");
+
+        // Modify this line to match the actual method signature in your GreetingController
         when(greetingController.greeting(any(String.class), any(Model.class)))
-                .thenReturn(mockGreeting);
+                .thenReturn("greeting");  // Here, use a String representing the view name
 
         // Act and Assert
         mockMvc.perform(get("/greeting"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.content", is("Hello, World!")));
+                .andExpect(view().name("greeting"))  // Check if the returned view name matches
+                .andExpect(model().attribute("greeting", mockGreeting));  // Check the model attribute
     }
 }
