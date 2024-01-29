@@ -1,3 +1,4 @@
 .*
 target
 ~/my-java-webapp/.*
+.vscode
